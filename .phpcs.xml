@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<ruleset name="xhprof">
+    <description>Discovered standards for xhprof.</description>
+    <rule ref="Generic.WhiteSpace.ScopeIndent">
+        <properties>
+            <property name="indent" value="2"/>
+            <property name="tabIndent" value="false" />
+        </properties>
+    </rule>
+</ruleset>

@@ -13,3 +13,11 @@ extension/tests/*.log
 extension/tests/*.php
 
 support/libxhprof/.phutil_module_cache
+
+# editor cruft
+*~
+.\#*
+\#*
+
+# Local environement
+.env*
