@@ -215,7 +215,7 @@ function xhprof_generate_dot_script($raw_data, $threshold, $source, $page,
   }
 
   // if it is a benchmark callgraph, we make the benchmarked function the root.
- if ($source == "bm" && array_key_exists("main()", $sym_table)) {
+  if ($source == "bm" && array_key_exists("main()", $sym_table)) {
     $total_times = $sym_table["main()"]["ct"];
     $remove_funcs = array("main()",
                           "hotprofiler_disable",

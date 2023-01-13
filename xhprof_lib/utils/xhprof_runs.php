@@ -155,7 +155,7 @@ class XHProfRuns_Default implements iXHProfRuns {
 
   function list_runs() {
     if (is_dir($this->dir)) {
-      echo '<hr/>Existing runs:<ul>';
+      echo '<hr/>Existing runs found in ' . $this->dir . ':<ul>';
       global $base_url;
       $files = glob("{$this->dir}/*.{$this->suffix}");
       usort($files, function($a, $b) {
