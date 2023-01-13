@@ -854,14 +854,14 @@ function full_report($url_params, $symbol_tab, $sort, $run1, $run2) {
     echo "</tr>";
 
     if (is_iterable($metrics)) {
-    foreach ($metrics as $metric) {
-      echo "<tr>";
-      echo "<td style='text-align:right; font-weight:bold'>Total "
-            . str_replace("<br>", " ", stat_description($metric)) . ":</td>";
-      echo "<td>" . number_format($totals[$metric]) .  " "
-           . $possible_metrics[$metric][1] . "</td>";
-      echo "</tr>";
-    }
+      foreach ($metrics as $metric) {
+        echo "<tr>";
+        echo "<td style='text-align:right; font-weight:bold'>Total "
+              . str_replace("<br>", " ", stat_description($metric)) . ":</td>";
+        echo "<td>" . number_format($totals[$metric]) .  " "
+             . $possible_metrics[$metric][1] . "</td>";
+        echo "</tr>";
+      }
     }
 
     if ($display_calls) {

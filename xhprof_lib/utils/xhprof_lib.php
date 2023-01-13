@@ -494,18 +494,18 @@ function xhprof_compute_flat_info($raw_data, &$overall_totals) {
 
   /* adjust exclusive times by deducting inclusive time of children */
   if (is_iterable($raw_data)) {
-  foreach ($raw_data as $parent_child => $info) {
-    list($parent, $child) = xhprof_parse_parent_child($parent_child);
+    foreach ($raw_data as $parent_child => $info) {
+      list($parent, $child) = xhprof_parse_parent_child($parent_child);
 
-    if ($parent) {
-      foreach ($metrics as $metric) {
-        // make sure the parent exists hasn't been pruned.
-        if (isset($symbol_tab[$parent])) {
-          $symbol_tab[$parent]["excl_" . $metric] -= $info[$metric];
+      if ($parent) {
+        foreach ($metrics as $metric) {
+          // make sure the parent exists hasn't been pruned.
+          if (isset($symbol_tab[$parent])) {
+            $symbol_tab[$parent]["excl_" . $metric] -= $info[$metric];
+          }
         }
       }
     }
-  }
   }
 
   return $symbol_tab;
@@ -581,42 +581,42 @@ function xhprof_compute_inclusive_times($raw_data) {
    * function is called from.
    */
   if(is_iterable($raw_data)) {
-  foreach ($raw_data as $parent_child => $info) {
+    foreach ($raw_data as $parent_child => $info) {
 
-    list($parent, $child) = xhprof_parse_parent_child($parent_child);
+      list($parent, $child) = xhprof_parse_parent_child($parent_child);
 
-    if ($parent == $child) {
-      /*
-       * XHProf PHP extension should never trigger this situation any more.
-       * Recursion is handled in the XHProf PHP extension by giving nested
-       * calls a unique recursion-depth appended name (for example, foo@1).
-       */
-      xhprof_error("Error in Raw Data: parent & child are both: $parent");
-      return;
-    }
+      if ($parent == $child) {
+        /*
+         * XHProf PHP extension should never trigger this situation any more.
+         * Recursion is handled in the XHProf PHP extension by giving nested
+         * calls a unique recursion-depth appended name (for example, foo@1).
+         */
+        xhprof_error("Error in Raw Data: parent & child are both: $parent");
+        return;
+      }
 
-    if (!isset($symbol_tab[$child])) {
+      if (!isset($symbol_tab[$child])) {
 
-      if ($display_calls) {
-        $symbol_tab[$child] = array("ct" => $info["ct"]);
+        if ($display_calls) {
+          $symbol_tab[$child] = array("ct" => $info["ct"]);
+        } else {
+          $symbol_tab[$child] = array();
+        }
+        foreach ($metrics as $metric) {
+          $symbol_tab[$child][$metric] = $info[$metric];
+        }
       } else {
-        $symbol_tab[$child] = array();
-      }
-      foreach ($metrics as $metric) {
-        $symbol_tab[$child][$metric] = $info[$metric];
-      }
-    } else {
-      if ($display_calls) {
-        /* increment call count for this child */
-        $symbol_tab[$child]["ct"] += $info["ct"];
-      }
+        if ($display_calls) {
+          /* increment call count for this child */
+          $symbol_tab[$child]["ct"] += $info["ct"];
+        }
 
-      /* update inclusive times/metric for this child  */
-      foreach ($metrics as $metric) {
-        $symbol_tab[$child][$metric] += $info[$metric];
+        /* update inclusive times/metric for this child  */
+        foreach ($metrics as $metric) {
+          $symbol_tab[$child][$metric] += $info[$metric];
+        }
       }
     }
-  }
   }
 
   return $symbol_tab;
