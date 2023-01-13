@@ -54,21 +54,7 @@ $params = array('run'        => array(XHPROF_STRING_PARAM, ''),
                 );
 
 // pull values of these params, and create named globals for each param
-xhprof_param_init($params);
-
-/* reset params to be a array of variable names to values
-   by the end of this page, param should only contain values that need
-   to be preserved for the next page. unset all unwanted keys in $params.
- */
-foreach ($params as $k => $v) {
-  $params[$k] = $$k;
-
-  // unset key from params that are using default values. So URLs aren't
-  // ridiculously long.
-  if ($params[$k] == $v[1]) {
-    unset($params[$k]);
-  }
-}
+$val = xhprof_param_init($params);
 
 echo "<html>";
 
@@ -86,9 +72,10 @@ $vrbar = ' class="vrbar"';
 $vgbar = ' class="vgbar"';
 
 $xhprof_runs_impl = new XHProfRuns_Default();
-
-displayXHProfReport($xhprof_runs_impl, $params, $source, $run, $wts,
-                    $symbol, $sort, $run1, $run2);
+displayXHProfReport(
+    $xhprof_runs_impl, $params, $val['source'], $val['run'], $val['wts'],
+    $val['symbol'], $val['sort'], $val['run1'], $val['run2']
+);
 
 
 echo "</body>";

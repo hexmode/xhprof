@@ -158,13 +158,16 @@ class XHProfRuns_Default implements iXHProfRuns {
       echo '<hr/>Existing runs found in ' . $this->dir . ':<ul>';
       global $base_url;
       $files = glob("{$this->dir}/*.{$this->suffix}");
+      if ( $files === false || count($files) === 0 ) {
+        $files = glob("{$this->dir}/*.{$this->suffix}.gz");
+      }
       usort($files, function($a, $b) {
         return filemtime($b) - filemtime($a);
       });
       echo '<table>';
       echo '<tr><th>run</th><th>time</th><th>size</th></tr>';
       foreach ($files as $file) {
-        list($run,$source) = explode('.', basename($file));
+        list($run,$source) = explode('.', basename($file), 2);
         echo '<tr>'
             . '<td><a href="' . htmlentities($base_url)
                               . '?run=' . htmlentities($run)

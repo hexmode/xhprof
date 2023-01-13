@@ -853,6 +853,7 @@ function full_report($url_params, $symbol_tab, $sort, $run1, $run2) {
     echo "<th></th>";
     echo "</tr>";
 
+    if (is_iterable($metrics)) {
     foreach ($metrics as $metric) {
       echo "<tr>";
       echo "<td style='text-align:right; font-weight:bold'>Total "
@@ -860,6 +861,7 @@ function full_report($url_params, $symbol_tab, $sort, $run1, $run2) {
       echo "<td>" . number_format($totals[$metric]) .  " "
            . $possible_metrics[$metric][1] . "</td>";
       echo "</tr>";
+    }
     }
 
     if ($display_calls) {

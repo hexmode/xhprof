@@ -66,7 +66,7 @@ $params = array(// run id param
                 );
 
 // pull values of these params, and create named globals for each param
-xhprof_param_init($params);
+$val = xhprof_param_init($params);
 
 // if invalid value specified for threshold, then use the default
 if ($threshold < 0 || $threshold > 1) {

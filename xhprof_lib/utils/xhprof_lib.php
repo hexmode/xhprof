@@ -493,6 +493,7 @@ function xhprof_compute_flat_info($raw_data, &$overall_totals) {
   }
 
   /* adjust exclusive times by deducting inclusive time of children */
+  if (is_iterable($raw_data)) {
   foreach ($raw_data as $parent_child => $info) {
     list($parent, $child) = xhprof_parse_parent_child($parent_child);
 
@@ -504,6 +505,7 @@ function xhprof_compute_flat_info($raw_data, &$overall_totals) {
         }
       }
     }
+  }
   }
 
   return $symbol_tab;
@@ -578,6 +580,7 @@ function xhprof_compute_inclusive_times($raw_data) {
    * call count for each function across all parents the
    * function is called from.
    */
+  if(is_iterable($raw_data)) {
   foreach ($raw_data as $parent_child => $info) {
 
     list($parent, $child) = xhprof_parse_parent_child($parent_child);
@@ -613,6 +616,7 @@ function xhprof_compute_inclusive_times($raw_data) {
         $symbol_tab[$child][$metric] += $info[$metric];
       }
     }
+  }
   }
 
   return $symbol_tab;
@@ -741,14 +745,8 @@ define('XHPROF_BOOL_PARAM',   4);
  *
  * @author Kannan
  */
-function xhprof_get_param_helper($param) {
-  $val = null;
-  if (isset($_GET[$param]))
-    $val = $_GET[$param];
-  else if (isset($_POST[$param])) {
-    $val = $_POST[$param];
-  }
-  return $val;
+function xhprof_get_param_helper($param, $default = null) {
+  return $_GET[$param] ?? $_POST[$param] ?? $default;
 }
 
 /**
@@ -759,11 +757,7 @@ function xhprof_get_param_helper($param) {
  * @author Kannan
  */
 function xhprof_get_string_param($param, $default = '') {
-  $val = xhprof_get_param_helper($param);
-
-  if ($val === null)
-    return $default;
-
+  $val = xhprof_get_param_helper($param, $default);
   return $val;
 }
 
@@ -885,7 +879,8 @@ function xhprof_get_bool_param($param, $default = false) {
  *                       used.
  * @author Kannan
  */
-function xhprof_param_init($params) {
+function xhprof_param_init($params): array {
+  $parse = [];
   /* Create variables specified in $params keys, init defaults */
   foreach ($params as $k => $v) {
     switch ($v[0]) {
@@ -907,7 +902,7 @@ function xhprof_param_init($params) {
       exit();
     }
 
-    if ($k === 'run') {
+    if ($k === 'run' && strstr($p, ",") !== false) {
       $p = implode(',', array_filter(explode(',', $p), 'ctype_xdigit'));
     }
 
@@ -916,8 +911,9 @@ function xhprof_param_init($params) {
     }
 
     // create a global variable using the parameter name.
-    $GLOBALS[$k] = $p;
+    $parse[$k] = $p;
   }
+  return $parse;
 }
 
 
