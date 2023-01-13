@@ -21,3 +21,6 @@ support/libxhprof/.phutil_module_cache
 
 # Local environement
 .env*
+
+# composer
+vendor

@@ -149,25 +149,34 @@ class XHProfRuns_Default implements iXHProfRuns {
   function human_filesize($bytes, $decimals = 2) {
     $sz = 'BKMGTP';
     $factor = floor((strlen($bytes) - 1) / 3);
-    return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . ($sz[$factor] ?? '');
+    return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor))
+      . ($sz[$factor] ?? '');
   }
 
   function list_runs() {
     if (is_dir($this->dir)) {
-      echo "<hr/>Existing runs:\n<ul>\n";
+      echo '<hr/>Existing runs:<ul>';
+      global $base_url;
       $files = glob("{$this->dir}/*.{$this->suffix}");
       usort($files, function($a, $b) {
         return filemtime($b) - filemtime($a);
       });
+      echo '<table>';
+      echo '<tr><th>run</th><th>time</th><th>size</th></tr>';
       foreach ($files as $file) {
         list($run,$source) = explode('.', basename($file));
-        echo '<li><a href="' . htmlentities($_SERVER['SCRIPT_NAME'])
-                             . '?run=' . htmlentities($run) . '&source='
-                             . htmlentities($source) . '">'
-                             . htmlentities(basename($file)) . "</a><small> "
-                             . date("Y-m-d H:i:s", filemtime($file)) . "</small></li>\n";
+        echo '<tr>'
+            . '<td><a href="' . htmlentities($base_url)
+                              . '?run=' . htmlentities($run)
+                              . '&source=' . htmlentities($source) . '">'
+                              . htmlentities(basename($file)) . '</a></td>'
+            . '<td><small>' . date("Y-m-d H:i:s", filemtime($file))
+                            . '</small></td>'
+            . '<td><small>' . $this->human_filesize(filesize($file))
+                            . '</small></td>'
+            . '</tr>';
       }
-      echo "</ul>\n";
+      echo "</table>\n";
     }
   }
 }
