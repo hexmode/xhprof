@@ -68,7 +68,7 @@ interface iXHProfRuns {
 class XHProfRuns_Default implements iXHProfRuns {
 
   private $dir = '';
-  private $suffix = 'xhprof';
+  private $suffix = 'xhprof.gz';
 
   private function gen_run_id($type) {
     return uniqid();
@@ -118,6 +118,13 @@ class XHProfRuns_Default implements iXHProfRuns {
     }
 
     $contents = file_get_contents($file_name);
+    if ($contents !== false && substr($file_name, -3) === ".gz") {
+        $contents = gzdecode($contents);
+    }
+    if ($contents === false) {
+        echo "Trouble reading $file_name";
+        exit(20);
+    }
     $run_desc = "XHProf Run (Namespace=$type)";
     return unserialize($contents);
   }
@@ -158,16 +165,13 @@ class XHProfRuns_Default implements iXHProfRuns {
       echo '<hr/>Existing runs found in ' . $this->dir . ':<ul>';
       global $base_url;
       $files = glob("{$this->dir}/*.{$this->suffix}");
-      if ( $files === false || count($files) === 0 ) {
-        $files = glob("{$this->dir}/*.{$this->suffix}.gz");
-      }
       usort($files, function($a, $b) {
         return filemtime($b) - filemtime($a);
       });
       echo '<table>';
       echo '<tr><th>run</th><th>time</th><th>size</th></tr>';
       foreach ($files as $file) {
-        list($run,$source) = explode('.', basename($file), 2);
+        list($run,$source) = explode('.', basename($file));
         echo '<tr>'
             . '<td><a href="' . htmlentities($base_url)
                               . '?run=' . htmlentities($run)
