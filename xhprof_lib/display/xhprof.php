@@ -42,8 +42,8 @@ require_once $GLOBALS['XHPROF_LIB_ROOT'].'/utils/xhprof_runs.php';
  * Our coding convention disallows relative paths in hrefs.
  * Get the base URL path from the SCRIPT_NAME.
  */
-$base_path = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
-$base_url = htmlentities($_SERVER['SCRIPT_NAME']);
+$base_path = $_ENV['BASE_PATH'] ?? rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+$base_url = $_ENV['BASE_URL'] ?? htmlentities($_SERVER['SCRIPT_NAME']);
 
 /**
  * Generate references to required stylesheets & javascript.

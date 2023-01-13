@@ -31,6 +31,11 @@
 //             Changhao Jiang
 //
 
+if ( substr( strtoupper( $_ENV["DEBUG"] ?? "N" ), 0, 1 )  === "Y" ) {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+}
+
 // by default assume that xhprof_html & xhprof_lib directories
 // are at the same level.
 $GLOBALS['XHPROF_LIB_ROOT'] = dirname(__FILE__) . '/../xhprof_lib';

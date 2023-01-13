@@ -32,7 +32,7 @@ if (!function_exists('xhprof_error')) {
  * @author Kannan
  */
 function xhprof_get_possible_metrics() {
- static $possible_metrics =
+  static $possible_metrics =
    array("wt" => array("Wall", "microsecs", "walltime"),
          "ut" => array("User", "microsecs", "user cpu time"),
          "st" => array("Sys", "microsecs", "system cpu time"),
@@ -40,7 +40,7 @@ function xhprof_get_possible_metrics() {
          "mu" => array("MUse", "bytes", "memory usage"),
          "pmu" => array("PMUse", "bytes", "peak memory usage"),
          "samples" => array("Samples", "samples", "cpu time"));
- return $possible_metrics;
+  return $possible_metrics;
 }
 
 /**
@@ -843,22 +843,22 @@ function xhprof_get_bool_param($param, $default = false) {
   $val = trim($val);
 
   switch (strtolower($val)) {
-  case '0':
-  case '1':
-    $val = (bool)$val;
+    case '0':
+    case '1':
+      $val = (bool)$val;
     break;
-  case 'true':
-  case 'on':
-  case 'yes':
-    $val = true;
+    case 'true':
+    case 'on':
+    case 'yes':
+      $val = true;
     break;
-  case 'false':
-  case 'off':
-  case 'no':
-    $val = false;
+    case 'false':
+    case 'off':
+    case 'no':
+      $val = false;
     break;
-  default:
-    xhprof_error("$param is $val. It must be a valid boolean string.");
+    default:
+      xhprof_error("$param is $val. It must be a valid boolean string.");
     return null;
   }
 
@@ -889,20 +889,20 @@ function xhprof_param_init($params) {
   /* Create variables specified in $params keys, init defaults */
   foreach ($params as $k => $v) {
     switch ($v[0]) {
-    case XHPROF_STRING_PARAM:
-      $p = xhprof_get_string_param($k, $v[1]);
+      case XHPROF_STRING_PARAM:
+        $p = xhprof_get_string_param($k, $v[1]);
       break;
-    case XHPROF_UINT_PARAM:
-      $p = xhprof_get_uint_param($k, $v[1]);
+      case XHPROF_UINT_PARAM:
+        $p = xhprof_get_uint_param($k, $v[1]);
       break;
-    case XHPROF_FLOAT_PARAM:
-      $p = xhprof_get_float_param($k, $v[1]);
+      case XHPROF_FLOAT_PARAM:
+        $p = xhprof_get_float_param($k, $v[1]);
       break;
-    case XHPROF_BOOL_PARAM:
-      $p = xhprof_get_bool_param($k, $v[1]);
+      case XHPROF_BOOL_PARAM:
+        $p = xhprof_get_bool_param($k, $v[1]);
       break;
-    default:
-      xhprof_error("Invalid param type passed to xhprof_param_init: "
+      default:
+        xhprof_error("Invalid param type passed to xhprof_param_init: "
                    . $v[0]);
       exit();
     }
@@ -930,19 +930,22 @@ function xhprof_param_init($params) {
  */
 function xhprof_get_matching_functions($q, $xhprof_data) {
 
-  $matches = array();
+  $res = [];
+  if (is_iterable($xhprof_data)) {
+    $matches = array();
 
-  foreach ($xhprof_data as $parent_child => $info) {
-    list($parent, $child) = xhprof_parse_parent_child($parent_child);
-    if (stripos($parent, $q) !== false) {
-      $matches[$parent] = 1;
+    foreach ($xhprof_data as $parent_child => $info) {
+      list($parent, $child) = xhprof_parse_parent_child($parent_child);
+      if (stripos($parent, $q) !== false) {
+        $matches[$parent] = 1;
+      }
+      if (stripos($child, $q) !== false) {
+        $matches[$child] = 1;
+      }
     }
-    if (stripos($child, $q) !== false) {
-      $matches[$child] = 1;
-    }
+
+    $res = array_keys($matches);
   }
-
-  $res = array_keys($matches);
 
   // sort it so the answers are in some reliable order...
   asort($res);

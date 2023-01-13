@@ -86,12 +86,13 @@ class XHProfRuns_Default implements iXHProfRuns {
 
   public function __construct($dir = null) {
 
+    $dir ??= $_ENV['XHPROF_OUTPUT_DIR'] ?? '';
     // if user hasn't passed a directory location,
     // we use the xhprof.output_dir ini setting
     // if specified, else we default to the directory
     // in which the error_log file resides.
 
-    if (empty($dir) && !($dir = getenv('XHPROF_OUTPUT_DIR'))) {
+    if ($dir === "") {
       $dir = ini_get("xhprof.output_dir");
       if (empty($dir)) {
 
@@ -145,20 +146,28 @@ class XHProfRuns_Default implements iXHProfRuns {
     return $run_id;
   }
 
+  function human_filesize($bytes, $decimals = 2) {
+    $sz = 'BKMGTP';
+    $factor = floor((strlen($bytes) - 1) / 3);
+    return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . ($sz[$factor] ?? '');
+  }
+
   function list_runs() {
     if (is_dir($this->dir)) {
-        echo "<hr/>Existing runs:\n<ul>\n";
-        $files = glob("{$this->dir}/*.{$this->suffix}");
-		usort($files, function($a, $b) {return filemtime($b) - filemtime($a);});
-        foreach ($files as $file) {
-            list($run,$source) = explode('.', basename($file));
-            echo '<li><a href="' . htmlentities($_SERVER['SCRIPT_NAME'])
-                . '?run=' . htmlentities($run) . '&source='
-                . htmlentities($source) . '">'
-                . htmlentities(basename($file)) . "</a><small> "
-                . date("Y-m-d H:i:s", filemtime($file)) . "</small></li>\n";
-        }
-        echo "</ul>\n";
+      echo "<hr/>Existing runs:\n<ul>\n";
+      $files = glob("{$this->dir}/*.{$this->suffix}");
+      usort($files, function($a, $b) {
+        return filemtime($b) - filemtime($a);
+      });
+      foreach ($files as $file) {
+        list($run,$source) = explode('.', basename($file));
+        echo '<li><a href="' . htmlentities($_SERVER['SCRIPT_NAME'])
+                             . '?run=' . htmlentities($run) . '&source='
+                             . htmlentities($source) . '">'
+                             . htmlentities(basename($file)) . "</a><small> "
+                             . date("Y-m-d H:i:s", filemtime($file)) . "</small></li>\n";
+      }
+      echo "</ul>\n";
     }
   }
 }
