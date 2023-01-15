@@ -73,7 +73,7 @@ $vgbar = ' class="vgbar"';
 
 $xhprof_runs_impl = new XHProfRuns_Default();
 displayXHProfReport(
-    $xhprof_runs_impl, $params, $val['source'], $val['run'], $val['wts'],
+    $xhprof_runs_impl, $val, $val['source'], $val['run'], $val['wts'],
     $val['symbol'], $val['sort'], $val['run1'], $val['run2']
 );
 
